@@ -99,7 +99,7 @@ object Users extends Controller with LoginLogout with AuthElement with AuthConfi
       })
   }
 
-  def showUser(username: String) = StackAction(AuthorityKey -> authorization(NormalUser) _) {implicit request =>
+  def showUser(username: String) = StackAction(AuthorityKey -> authorization(Administrator) _) {implicit request =>
   	val user = loggedIn
     val userForm = Users.userForm.fill(User.findOneByUsername(username).get)
     Ok(views.html.UserInfomation(userForm))

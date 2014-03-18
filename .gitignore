@@ -16,3 +16,6 @@ dist
 /.class
 cd
 git
+*.class
+*.cache
+*.class
