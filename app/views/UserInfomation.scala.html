@@ -1,0 +1,27 @@
+@* UserInfomation Template File *@
+@(userForm: Form[User])
+ @import helper._
+ 
+    @main("用户注册") {
+
+        <h2 align = "center">用户信息</h2>
+       
+        @form(routes.Users.update(userForm.get.id), 'id -> "userForm") {
+          <fieldset>
+           	
+           	<input type="hidden" name="id" value="@userForm.get.id" />
+			<input type="hidden" name="password" value="@userForm.get.password" />
+			
+            @inputText(userForm("username"),'_label -> "用户名", 'readonly ->"true")
+            
+			@inputText(userForm("permission"), '_label -> "权限")
+			
+			
+		  </fieldset>            
+            <input type = "submit" class = "buttons" value="更新">
+            
+            <a herf = "@routes.Users.show"><input type = "reset" class = "buttons" value="取消">
+           
+        }
+
+    }

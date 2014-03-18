@@ -1,0 +1,30 @@
+@(userForm: Form[User])
+
+    @import helper._
+
+    @main("用户注册") {
+
+        <h2 align = "center">新用户</h2>
+       
+        @form(routes.Users.register(), 'id -> "userForm") {
+          <fieldset>
+            @inputText(userForm("username"),'_label -> "用户名",
+            	'_error -> userForm("username").error.map(_.withMessage("请输入用户名!")))
+
+			@inputPassword(userForm("password.main"),'_label -> "密码")
+			
+			@inputPassword(userForm("password.confirm"),'_label -> "确认密码",'_error -> userForm.error("password"))
+			
+			@inputText(userForm("permission"), '_label -> "权限")
+		
+		  </fieldset>
+		  
+            <input type="submit" class = "buttons" value="注册">
+            
+            <a href="login"><input type = "button" class = "buttons" value="登录"></a>
+            
+            <input type = "reset" class = "buttons" value="重置">
+           
+        }
+
+    }

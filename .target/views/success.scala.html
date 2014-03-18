@@ -1,0 +1,14 @@
+@(username: String)
+
+@import helper._
+
+@main("登录成功"){
+    <h2>欢迎回来 @username!</h2>
+     
+   <!-- form(routes.Application.info(username)) {
+       <input type="submit" class = "buttons" value = "个人信息查询">
+     }
+   -->
+    
+   <a href = "@routes.Users.show(username)"><input type="button" class = "buttons" value = "个人信息查询"></a>
+}
