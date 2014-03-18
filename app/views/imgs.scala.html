@@ -1,0 +1,21 @@
+@helper.form(routes.Application.upload, 'enctype -> "multipart/form-data") {
+  <input type="file" id="filePhoto" name="photo" style="width:450"  /> 
+  <button type="submit">upload</button>
+}
+<img src='@routes.Assets.at("images/photo.jpg")' id="target">
+<script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+<script type="text/javascript">
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#target').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$("#filePhoto").change(function() {
+    readURL(this);
+});
+</script>

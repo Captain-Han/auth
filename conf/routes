@@ -9,6 +9,8 @@ GET         /login                     controllers.Application.login()
 
 GET         /register                  controllers.Application.register()
 
+GET         /imgs                  	   controllers.Application.imgs()
+
 POST        /login                     controllers.Users.login()
 
 POST        /registersubmit            controllers.Users.register()
@@ -20,5 +22,12 @@ GET         /showUser/:username        controllers.Users.showUser(username :Stri
 GET         /show        			   controllers.Users.show()
 
 GET         /editUser/:username        controllers.Users.edit(username :String)
+
+POST		/upload				   	   controllers.Application.upload()
+
+GET         /saveImg/:id        	   controllers.Users.saveImg(id :ObjectId)
+
+GET         /photos/:file              controllers.Application.getPhoto(file: ObjectId)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

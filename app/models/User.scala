@@ -16,6 +16,7 @@ case class User(
 				 id: ObjectId = new ObjectId,	
                  username: String,
                  password: String,
+                 img: String,
                  permission: String
                  )
 

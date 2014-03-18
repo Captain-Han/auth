@@ -29,7 +29,7 @@ object Users extends Controller with LoginLogout with AuthElement with AuthConfi
           "Passwords don't match", passwords => passwords._1 == passwords._2),
       "permission" -> text) {
         // Binding: Create a User from the mapping result (ignore the second password and the accept field)
-        (username, password, permission) => User(new ObjectId, username, password._1, permission)
+        (username, password, permission) => User(new ObjectId, username, password._1, (new ObjectId).toString(), permission)
       } // Unbinding: Create the mapping values from an existing Hacker value
       {
         user => Some((user.username, (user.password, ""), user.permission))
@@ -48,25 +48,16 @@ object Users extends Controller with LoginLogout with AuthElement with AuthConfi
     mapping(
       "username" -> text,
       "password" -> text,
+      "img" ->text,
       "permission" -> text) {
         // Binding: Create a User from the mapping result (ignore the second password and the accept field)
-        (username, password, permission) => User(new ObjectId, username, password, permission)
+        (username, password, img, permission) => User(new ObjectId, username, password, img, permission)
       } // Unbinding: Create the mapping values from an existing Hacker value
       {
-        user => Some((user.username, user.password, user.permission))
+        user => Some((user.username, user.password, user.img, user.permission))
       }
   )
   
-  def index() = Action {
-    val users = User.findAll().toList
-    Ok("")
-  }
-
-  /*def login() = JsonAction[User] { user =>
-    val u = User.authenticate(user.username, user.password).get
-    Ok(views.html.success(u.username))
-  }*/
-
   def login = Action.async { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(views.html.login(formWithErrors))),
@@ -74,11 +65,6 @@ object Users extends Controller with LoginLogout with AuthElement with AuthConfi
     )
   }
 
-  /* def register() = JsonAction[User] { user =>
-    User.save(user, WriteConcern.Safe)
-    Ok(Json.toJson(user))
-    //Ok(views.html.success(user.username))
-  }*/
   def register = Action { implicit request =>
     Users.registerForm.bindFromRequest.fold(
       errors => BadRequest(views.html.message1(errors)),
@@ -97,6 +83,14 @@ object Users extends Controller with LoginLogout with AuthElement with AuthConfi
           User.save(user.copy(id = id), WriteConcern.Safe)
           Ok(views.html.success(user.username))
       })
+  }
+  
+  def saveImg(id :ObjectId) = StackAction(AuthorityKey -> authorization(NormalUser) _){implicit request =>
+    println("------------------------"+"saveImg"+"----------------------")
+    val user = loggedIn
+    println("------------------------"+user.toString+"----------------------")
+    User.save(user.copy(img = id.toString()), WriteConcern.Safe)
+    Redirect(routes.Users.show())
   }
 
   def showUser(username: String) = StackAction(AuthorityKey -> authorization(Administrator) _) {implicit request =>
@@ -117,11 +111,11 @@ object Users extends Controller with LoginLogout with AuthElement with AuthConfi
     Ok(views.html.UserInfomation(userForm))
     }
   
-  //def isAuthor(id :ObjectId, objectType : String)(user : User) : Future[Boolean] =
-    def isAuthor(username : String)(user : User) : Future[Boolean] =
-    Future{User.findOneByUsername(username).map(_ == user).get}
+  //move to models
+  def isAuthor(username : String)(user : User) : Future[Boolean] = Future{User.findOneByUsername(username).map(_ == user).get}
   
   def requireAdminUser(user: User): Future[Boolean] = Future.successful(user.permission == "Administrator")
+ 
   def authorization(permission: Permission)(user : User)(implicit ctx: ExecutionContext) = Future.successful((permission, user.permission) match {
     case ( _, "Administrator") => true
     case (NormalUser, "NormalUser") => true
