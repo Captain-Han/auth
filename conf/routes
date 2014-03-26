@@ -3,31 +3,41 @@
 # ~~~~
 
 # Home page
-GET         /                          controllers.Application.index()
+GET         /                            controllers.Application.index()
 
-GET         /login                     controllers.Application.login()
+GET         /login                       controllers.Application.login()
 
-GET         /register                  controllers.Application.register()
+GET         /newBlog                     controllers.Blogs.newBlog
 
-GET         /imgs                  	   controllers.Application.imgs()
+POST        /writeBlog/                  controllers.Blogs.writeBlog
+#GET         /editBlog/:blogId            controllers.Blogs.editBlog(blogId : ObjectId)
+#POST        /modBlog/:blogId             controllers.Blogs.modBlog(blogId : ObjectId)
+#GET         /showBlogById/:blogId        controllers.Blogs.showBlogById(blogId: ObjectId)
+#GET         /showBlog                    controllers.Blogs.showBlog
 
-POST        /login                     controllers.Users.login()
 
-POST        /registersubmit            controllers.Users.register()
 
-GET         /updateUser/:id            controllers.Users.update(id :ObjectId)
+GET         /register                    controllers.Application.register()
 
-GET         /showUser/:username        controllers.Users.showUser(username :String)
+GET         /imgs                        controllers.Application.imgs()
 
-GET         /show        			   controllers.Users.show()
+POST        /login                       controllers.Users.login
 
-GET         /editUser/:username        controllers.Users.edit(username :String)
+POST        /registersubmit              controllers.Users.register
 
-POST		/upload				   	   controllers.Application.upload()
+GET         /updateUser/:id              controllers.Users.update(id :ObjectId)
 
-GET         /saveImg/:id        	   controllers.Users.saveImg(id :ObjectId)
+GET         /showUser/:username          controllers.Users.showUser(username :String)
 
-GET         /photos/:file              controllers.Application.getPhoto(file: ObjectId)
+GET         /show                        controllers.Users.show()
+
+GET         /editUser/:username          controllers.Users.edit(username :String)
+
+POST        /upload                      controllers.Application.upload()
+
+GET         /saveImg/:id                 controllers.Users.saveImg(id :ObjectId)
+
+GET         /photos/:file                controllers.Application.getPhoto(file: ObjectId)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                controllers.Assets.at(path="/public", file)

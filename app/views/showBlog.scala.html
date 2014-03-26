@@ -1,0 +1,21 @@
+@(blogForm: Form[Blog])
+<head>
+        <title>所有博客</title>
+            <!-- Make sure the path to CKEditor is correct. -->
+        <script src="@routes.Assets.at("javascripts/ckeditor/ckeditor.js")" type="text/javascript"></script>
+    </head>
+<body>
+        <form action="@routes.Blogs.newBlog()" method="post">
+            <p>标题：</p><input type="text" name="title" id="title">
+            <p>内容：</p>
+            <textarea name="content" id="content" rows="10" cols="80">
+                This is my textarea to be replaced with CKEditor.
+            </textarea>
+            <input type="submit" value="发表">
+            <script>
+            // Replace the <textarea id="editor1"> with a CKEditor
+            // instance, using default configuration.
+            CKEDITOR.replace( 'content' );
+            </script>
+        </form>
+</body>
