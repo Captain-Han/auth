@@ -1,6 +1,5 @@
 package controllers
 
-import play.api._
 import play.api.mvc._
 import com.mongodb.casbah.MongoConnection
 import com.mongodb.casbah.gridfs.GridFS
@@ -8,6 +7,17 @@ import se.radley.plugin.salat.Binders._
 import scala.concurrent.ExecutionContext
 import java.text.SimpleDateFormat
 import play.api.libs.iteratee.Enumerator
+import play.api.mvc.ResponseHeader
+import play.api.mvc.SimpleResult
+import scala._
+import models._
+import java.io._
+import play.api.mvc.ResponseHeader
+import play.api.mvc.SimpleResult
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
+import play.api.data.Form
+import play.api.data.Forms._
 
 object Application extends Controller {
 
@@ -27,19 +37,46 @@ object Application extends Controller {
     Ok(views.html.imgs())
   }
   
-  def upload = Action(parse.multipartFormData) { request =>
-    request.body.file("photo") match {
-      case Some(photo) =>
-       val db = MongoConnection()("mydb")
-       val gridFs = GridFS(db)
-        val uploadedFile = gridFs.createFile(photo.ref.file)
-        uploadedFile.contentType = photo.contentType.orNull
-        uploadedFile.save()
-        Redirect(routes.Users.saveImg(uploadedFile._id.get))
-      case None => BadRequest("no photo")
-    }
+  def upload() = Action(parse.multipartFormData) {implicit request =>
+    request.body.file("photo").map{ photo =>
+          imgForm.bindFromRequest.fold(
+          errors =>Ok(""),
+          img =>{
+          val db = MongoConnection()("mydb")
+          val gridFs = GridFS(db)
+          val file = photo.ref.file
+
+          val originImage =  ImageIO.read(file)
+
+          val newImage = originImage.getSubimage(img.x1,img.y1,img.w,img.h)
+
+          val  os = new ByteArrayOutputStream();
+
+          ImageIO.write(newImage, "jpg", os);
+
+          val inputStream = new ByteArrayInputStream(os.toByteArray());
+
+          val uploadedFile = gridFs.createFile(inputStream)
+
+          uploadedFile.contentType = photo.contentType.orNull
+          uploadedFile.save()
+          Redirect(routes.Users.saveImg(uploadedFile._id.get))
+          }
+          )
+    }.getOrElse(Redirect(routes.Application.index))
   }
-  
+
+    val imgForm : Form[Img] =Form(
+        mapping(
+        "x1"->number,
+        "y1"->number,
+        "x2"->number,
+        "y2"->number,
+        "w"->number,
+        "h"->number)(Img.apply)(Img.unapply)
+    )
+
+
   def getPhoto(file: ObjectId) = Action {
     import com.mongodb.casbah.Implicits._
     import ExecutionContext.Implicits.global

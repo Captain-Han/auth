@@ -33,7 +33,7 @@ GET         /show                        controllers.Users.show()
 
 GET         /editUser/:username          controllers.Users.edit(username :String)
 
-POST        /upload                      controllers.Application.upload()
+POST        /upload                      controllers.Application.upload
 
 GET         /saveImg/:id                 controllers.Users.saveImg(id :ObjectId)
 
