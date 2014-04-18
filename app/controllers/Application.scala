@@ -7,17 +7,15 @@ import se.radley.plugin.salat.Binders._
 import scala.concurrent.ExecutionContext
 import java.text.SimpleDateFormat
 import play.api.libs.iteratee.Enumerator
-import play.api.mvc.ResponseHeader
 import play.api.mvc.SimpleResult
-import scala._
 import models._
 import java.io._
 import play.api.mvc.ResponseHeader
-import play.api.mvc.SimpleResult
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.templates.Html
 
 object Application extends Controller {
 
@@ -40,7 +38,7 @@ object Application extends Controller {
   def upload() = Action(parse.multipartFormData) {implicit request =>
     request.body.file("photo").map{ photo =>
           imgForm.bindFromRequest.fold(
-          errors =>Ok(""),
+           errors =>Ok(Html(errors.toString)),
           img =>{
           val db = MongoConnection()("mydb")
           val gridFs = GridFS(db)
@@ -48,7 +46,7 @@ object Application extends Controller {
 
           val originImage =  ImageIO.read(file)
 
-          val newImage = originImage.getSubimage(img.x1,img.y1,img.w,img.h)
+          val newImage = originImage.getSubimage(img.x1.intValue,img.y1.intValue,img.w.intValue,img.h.intValue)
 
           val  os = new ByteArrayOutputStream();
 
@@ -63,17 +61,17 @@ object Application extends Controller {
           Redirect(routes.Users.saveImg(uploadedFile._id.get))
           }
           )
-    }.getOrElse(Redirect(routes.Application.index))
+    }.getOrElse(Ok(Html("无图片")))
   }
 
     val imgForm : Form[Img] =Form(
         mapping(
-        "x1"->number,
-        "y1"->number,
-        "x2"->number,
-        "y2"->number,
-        "w"->number,
-        "h"->number)(Img.apply)(Img.unapply)
+        "x1"->bigDecimal,
+        "y1"->bigDecimal,
+        "x2"->bigDecimal,
+        "y2"->bigDecimal,
+        "w"->bigDecimal,
+        "h"->bigDecimal)(Img.apply)(Img.unapply)
     )
 
 

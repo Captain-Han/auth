@@ -1,9 +1,12 @@
 package models
 
+import scala.BigDecimal
+
+
 case class Img(
-             x1:Int,
-             y1:Int,
-             x2:Int,
-             y2:Int,
-             w:Int,
-             h:Int)
+             x1:BigDecimal,
+             y1:BigDecimal,
+             x2:BigDecimal,
+             y2:BigDecimal,
+             w:BigDecimal,
+             h:BigDecimal)

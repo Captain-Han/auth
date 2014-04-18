@@ -56,7 +56,9 @@ $('#target').Jcrop({
 onChange: updatePreview,
 onSelect: updatePreview,
 onRelease:  clearCoords,
-aspectRatio: xsize / ysize
+boxWidth: 600,
+boxHeight: 600,
+aspectRatio: 1
 },function(){
 // Use the API to get the real image size
 var bounds = this.getBounds();
@@ -109,8 +111,16 @@ $('#coords input').val('');
 $('#filePhoto').change(function() {
 readURL(this);
 });
+/*
+$('#filePhoto').bind('change blur',function() {
+
+readURL(this);
+});*/
 
 function readURL(input) {
+    alert("111111111");
+    alert(input.files[0]);
+    alert(input.type);
 if (input.files && input.files[0]) {
 var reader = new FileReader();
 reader.onload = function(e) {
